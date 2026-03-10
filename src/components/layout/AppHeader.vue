@@ -33,7 +33,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
           <rect x="2" y="7" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
           <polyline points="8 2 12 6 16 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="logo-text">bram's coding assignment</span>
+        <span class="logo-text">Bram's coding assignment</span>
       </router-link>
 
       <div class="spacer" />
@@ -75,8 +75,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .header-inner {
-  max-width: 1400px;
-  margin: 0 auto;
   height: 100%;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -93,14 +91,17 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   gap: 10px;
   color: var(--color-text);
   flex-shrink: 0;
+  margin: -8px;
+  padding: 8px;
+  margin-left: calc(-1 * var(--page-padding));
+  padding-left: var(--page-padding);
 }
 
 .logo-text {
-  font-size: 0.8125rem;
+  font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  text-transform: lowercase;
-  color: var(--color-text-dim);
+  color: var(--color-text);
 }
 
 .tv-screen {
@@ -110,12 +111,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 .logo:hover .tv-screen {
   fill: var(--color-accent);
-  animation: blink 0.6s steps(1) infinite;
-}
-
-@keyframes blink {
-  0%, 100% { fill: var(--color-accent); }
-  50% { fill: transparent; }
 }
 
 /* ── End group ── */
@@ -172,7 +167,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 @media (max-width: 768px) {
   .logo-text {
-    display: none;
+    font-size: 0.6875rem;
   }
 }
 

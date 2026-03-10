@@ -60,7 +60,7 @@ function onSavePreferences(genres: string[]) {
       <div class="page-header">
         <h1 class="page-title">Shows</h1>
         <a href="https://shelf-life-rho.vercel.app" target="_blank" rel="noopener noreferrer" class="picks-btn">
-          <span class="beta-badge">beta</span>
+          <span class="beta-badge">beta!</span>
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>

@@ -21,6 +21,10 @@ function toggle(genre: string) {
   selected.value = new Set(selected.value)
 }
 
+function clearAll() {
+  selected.value = new Set()
+}
+
 function save() {
   emit('save', [...selected.value])
 }
@@ -58,6 +62,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
       </div>
 
       <div class="actions">
+        <button v-if="selected.size > 0" class="clear-all" @click="clearAll">clear all</button>
         <AppButton variant="primary" @click="save">
           {{ selected.size > 0 ? "Let's go!" : 'Skip' }}
         </AppButton>
@@ -147,6 +152,23 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
 .actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 16px;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: var(--color-text-dim);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color var(--transition-fast);
+}
+
+.clear-all:hover {
+  color: var(--color-text);
 }
 </style>
