@@ -25,27 +25,27 @@
   --transition-normal: 250ms ease;
   --transition-slow: 400ms ease;
 
-  --header-height: 64px;
-  --page-padding: 24px;
-  --card-width: 180px;
-  --card-gap: 16px;
+  --header-height: 56px;
+  --page-padding: 12px;
+  --card-width: 120px;
+  --card-gap: 10px;
 
   --min-tap-target: 44px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 481px) {
   :root {
     --page-padding: 16px;
     --card-width: 140px;
     --card-gap: 12px;
-    --header-height: 56px;
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 769px) {
   :root {
-    --page-padding: 12px;
-    --card-width: 120px;
-    --card-gap: 10px;
+    --header-height: 64px;
+    --page-padding: 24px;
+    --card-width: 180px;
+    --card-gap: 16px;
   }
 }

@@ -72,13 +72,16 @@ function stripHtml(html: string | null): string {
 <style scoped>
 .show-info {
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
   padding: 0 var(--page-padding);
 }
 
 .poster-col {
   flex-shrink: 0;
-  width: 280px;
+  width: 200px;
 }
 
 .poster {
@@ -109,6 +112,7 @@ function stripHtml(html: string | null): string {
 .meta-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 16px;
@@ -129,6 +133,7 @@ function stripHtml(html: string | null): string {
 
 .genres {
   display: flex;
+  justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 20px;
@@ -169,24 +174,21 @@ function stripHtml(html: string | null): string {
   color: #ff6666;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .show-info {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    gap: 32px;
   }
 
   .poster-col {
-    width: 200px;
+    width: 280px;
   }
 
   .meta-row,
   .genres {
-    justify-content: center;
-  }
-
-  .summary {
-    text-align: left;
+    justify-content: flex-start;
   }
 }
 </style>

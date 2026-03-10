@@ -148,6 +148,25 @@ TVMaze does not publish an OpenAPI spec. The types in `src/types/show.ts` are ha
 
 ---
 
+## Responsive Design
+
+**Mobile-first only.** All CSS is written for the smallest viewport first. Larger viewports are handled with `@media (min-width: ...)` queries. `@media (max-width: ...)` is not permitted anywhere in the codebase.
+
+Breakpoints (defined in `_variables.css`):
+- **Default** — Mobile (< 481px)
+- **`min-width: 481px`** — Small tablet and up
+- **`min-width: 769px`** — Desktop
+
+CSS custom properties scale with breakpoints:
+- `--page-padding`: 12px → 16px → 24px
+- `--card-width`: 120px → 140px → 180px
+- `--card-gap`: 10px → 12px → 16px
+- `--header-height`: 56px → 56px → 64px
+
+Typography scales at 769px (h1: 1.5rem → 2rem, h2: 1.25rem → 1.5rem).
+
+---
+
 ## Styling Rules
 
 - **Genre colors are fixed.** Every genre has a hardcoded color in `GenreTag.vue`'s `GENRE_COLORS` map. Unknown genres fall back to a deterministic HSL color derived from the genre name hash. To add or change a genre color, edit the map directly.
