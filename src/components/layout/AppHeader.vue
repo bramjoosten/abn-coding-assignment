@@ -177,6 +177,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     gap: 12px;
   }
 
+  .logo-text {
+    display: none;
+  }
+
   .spacer {
     display: none;
   }
