@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref, onMounted, onUnmounted } from 'vue'
+import { watch } from 'vue'
 import { useShows } from '@/composables/useShows'
 import GenreSection from '@/components/show/GenreSection.vue'
 import LazySection from '@/components/ui/LazySection.vue'
@@ -8,9 +8,9 @@ import ErrorState from '@/components/ui/ErrorState.vue'
 import GenrePickerModal from '@/components/ui/GenrePickerModal.vue'
 
 const {
-  loading, error, hasMore, genreMap, sortedGenres,
+  loading, error, genreMap, sortedGenres,
   hasChosenPrefs, preferredGenres, showGenrePicker, setPreferredGenres,
-  retry, loadMore,
+  retry,
 } = useShows()
 
 // Show picker after initial data loads if user hasn't chosen yet
@@ -28,25 +28,6 @@ function onSavePreferences(genres: string[]) {
   showGenrePicker.value = false
 }
 
-// Load remaining API pages when the scroll sentinel becomes visible
-const sentinel = ref<HTMLElement | null>(null)
-let sentinelObserver: IntersectionObserver | null = null
-
-onMounted(() => {
-  sentinelObserver = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting && hasMore.value) {
-        loadMore()
-      }
-    },
-    { rootMargin: '600px' },
-  )
-  if (sentinel.value) sentinelObserver.observe(sentinel.value)
-})
-
-onUnmounted(() => {
-  sentinelObserver?.disconnect()
-})
 </script>
 
 <template>
@@ -78,12 +59,13 @@ onUnmounted(() => {
     <template v-else>
       <div class="page-header">
         <h1 class="page-title">Shows</h1>
-        <a href="https://shelf-live-rho.vercel.app" target="_blank" rel="noopener noreferrer" class="vhs-link">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <a href="https://shelf-life-rho.vercel.app" target="_blank" rel="noopener noreferrer" class="picks-btn">
+          <span class="beta-badge">beta</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
           </svg>
-          video store experience
+          director's picks 3d experience
         </a>
       </div>
 
@@ -94,8 +76,6 @@ onUnmounted(() => {
         />
       </LazySection>
 
-      <!-- Sentinel triggers loading remaining API pages -->
-      <div ref="sentinel" class="scroll-sentinel" />
     </template>
   </main>
 </template>
@@ -124,23 +104,41 @@ onUnmounted(() => {
   font-size: 1.5rem;
 }
 
-.vhs-link {
+.picks-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-left: auto;
+  padding: 6px 14px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-text-muted);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   white-space: nowrap;
-  transition: color var(--transition-fast);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
-.vhs-link:hover {
-  color: var(--color-accent);
+.picks-btn:hover {
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-text));
+  border-color: var(--color-text-dim);
 }
 
-.scroll-sentinel {
-  height: 1px;
+.beta-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  padding: 1px 6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #1a1a1a;
+  background: var(--color-accent);
+  border-radius: 100px;
+  line-height: 1.4;
 }
 
 /* ── Skeleton loading ── */

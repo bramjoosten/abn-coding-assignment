@@ -1,8 +1,18 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import type { Show } from '@/types/show'
 import ShowCarousel from './ShowCarousel.vue'
+import { useShowStore } from '@/stores/showStore'
+import { CAROUSEL_PAGE_SIZE } from '@/constants'
 
-defineProps<{ genre: string; shows: Show[] }>()
+const props = defineProps<{ genre: string; shows: Show[] }>()
+const { requestBackfill } = useShowStore()
+
+onMounted(() => {
+  if (props.shows.length < CAROUSEL_PAGE_SIZE) {
+    requestBackfill(props.genre)
+  }
+})
 </script>
 
 <template>

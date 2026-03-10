@@ -1,10 +1,32 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import type { Show } from '@/types/show'
 import ShowCard from './ShowCard.vue'
-import { SCROLL_THRESHOLD, SCROLL_FRACTION } from '@/constants'
+import { SCROLL_THRESHOLD, SCROLL_FRACTION, CAROUSEL_PAGE_SIZE } from '@/constants'
 
-defineProps<{ shows: Show[] }>()
+const props = defineProps<{ shows: Show[] }>()
+
+const visibleCount = ref(CAROUSEL_PAGE_SIZE)
+const visibleShows = computed(() => props.shows.slice(0, visibleCount.value))
+const hasMore = computed(() => visibleCount.value < props.shows.length)
+const remaining = computed(() => Math.min(CAROUSEL_PAGE_SIZE, props.shows.length - visibleCount.value))
+
+async function showMore() {
+  if (!track.value) {
+    visibleCount.value += CAROUSEL_PAGE_SIZE
+    return
+  }
+  const scrollPos = track.value.scrollLeft
+  // Temporarily disable scroll-snap so the browser doesn't snap back
+  track.value.style.scrollSnapType = 'none'
+  visibleCount.value += CAROUSEL_PAGE_SIZE
+  await nextTick()
+  track.value.scrollLeft = scrollPos
+  // Re-enable scroll-snap after layout settles
+  requestAnimationFrame(() => {
+    if (track.value) track.value.style.scrollSnapType = ''
+  })
+}
 
 const track = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
@@ -67,7 +89,11 @@ onUnmounted(() => {
     </button>
 
     <div ref="track" class="carousel-track">
-      <ShowCard v-for="show in shows" :key="show.id" :show="show" />
+      <ShowCard v-for="show in visibleShows" :key="show.id" :show="show" />
+      <button v-if="hasMore" class="show-more-btn" @click="showMore">
+        <span class="show-more-count">+{{ remaining }}</span>
+        <span class="show-more-label">show more</span>
+      </button>
     </div>
 
     <button
@@ -150,5 +176,40 @@ onUnmounted(() => {
 
 .scroll-btn--right {
   right: 6px;
+}
+
+/* ── Show more button ── */
+
+.show-more-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: var(--card-width, 160px);
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.show-more-btn:hover {
+  border-color: var(--color-text-dim);
+  color: var(--color-text);
+}
+
+.show-more-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.show-more-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 </style>

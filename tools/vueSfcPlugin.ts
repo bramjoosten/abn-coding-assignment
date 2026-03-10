@@ -40,11 +40,13 @@ export function vueSfcPlugin(): esbuild.Plugin {
 
         // Compile <template>
         let templateCode = ''
+        const hasScoped = descriptor.styles.some((s) => s.scoped)
         if (descriptor.template) {
           const tpl = compileTemplate({
             source: descriptor.template.content,
             filename,
             id,
+            scoped: hasScoped,
             compilerOptions: { bindingMetadata },
           })
           if (tpl.errors.length) {
@@ -87,7 +89,7 @@ export function vueSfcPlugin(): esbuild.Plugin {
           code += '\n_sfc_main.render = render'
         }
 
-        if (descriptor.styles.some((s) => s.scoped)) {
+        if (hasScoped) {
           code += `\n_sfc_main.__scopeId = "data-v-${id}"`
         }
 

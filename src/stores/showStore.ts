@@ -5,15 +5,19 @@
 
 import { ref, computed } from 'vue'
 import { fetchPages } from '@/api/shows'
-import { EXCLUDED_GENRES, API_INITIAL_PAGES, API_MAX_PAGES, PREFS_STORAGE_KEY } from '@/constants'
+import {
+  EXCLUDED_GENRES, API_INITIAL_PAGES, API_HARD_CEILING,
+  API_BACKFILL_BATCH, CAROUSEL_PAGE_SIZE, PREFS_STORAGE_KEY,
+} from '@/constants'
 import type { Show } from '@/types/show'
 
 const shows = ref<Show[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const pagesLoaded = ref(0)
+const exhausted = ref(false)
 
-const hasMore = computed(() => pagesLoaded.value < API_MAX_PAGES)
+const canFetchMore = computed(() => !exhausted.value && pagesLoaded.value < API_HARD_CEILING)
 
 // ── Genre preferences ───────────────────────────────────────────────────────
 
@@ -90,18 +94,44 @@ async function loadShows() {
   }
 }
 
-async function loadMore() {
-  if (!hasMore.value || loading.value) return
+// ── Per-genre backfill ──────────────────────────────────────────────────────
 
-  const from = pagesLoaded.value
-  const to = API_MAX_PAGES
+let backfillPromise: Promise<void> | null = null
 
+/**
+ * Called when a genre section becomes visible and has fewer shows than
+ * CAROUSEL_PAGE_SIZE. Fetches more API pages in batches until the genre
+ * is filled or we hit the ceiling. Concurrent calls share the same fetch.
+ */
+function requestBackfill(genre: string): void {
+  const genreShows = genreMap.value.get(genre)
+  if (!canFetchMore.value || (genreShows && genreShows.length >= CAROUSEL_PAGE_SIZE)) return
+
+  if (!backfillPromise) {
+    backfillPromise = doBackfill(genre).finally(() => { backfillPromise = null })
+  }
+}
+
+async function doBackfill(genre: string): Promise<void> {
   try {
-    const more = await fetchPages(from, to)
-    shows.value = [...shows.value, ...more]
-    pagesLoaded.value = to
+    while (canFetchMore.value) {
+      const genreShows = genreMap.value.get(genre)
+      if (genreShows && genreShows.length >= CAROUSEL_PAGE_SIZE) break
+
+      const from = pagesLoaded.value
+      const to = Math.min(from + API_BACKFILL_BATCH, API_HARD_CEILING)
+      const more = await fetchPages(from, to)
+
+      if (more.length === 0) {
+        exhausted.value = true
+        break
+      }
+
+      shows.value = [...shows.value, ...more]
+      pagesLoaded.value = to
+    }
   } catch {
-    // Silently fail — initial data is already visible
+    // Best-effort — stop on failure
   }
 }
 
@@ -111,6 +141,7 @@ export function _resetShowStore() {
   loading.value = false
   error.value = null
   pagesLoaded.value = 0
+  exhausted.value = false
   preferredGenres.value = []
   hasChosenPrefs.value = false
   showGenrePicker.value = false
@@ -118,8 +149,8 @@ export function _resetShowStore() {
 
 export function useShowStore() {
   return {
-    shows, loading, error, hasMore, genreMap, sortedGenres,
+    shows, loading, error, canFetchMore, genreMap, sortedGenres,
     preferredGenres, hasChosenPrefs, showGenrePicker, setPreferredGenres,
-    loadShows, loadMore,
+    loadShows, requestBackfill,
   }
 }

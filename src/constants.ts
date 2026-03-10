@@ -6,7 +6,8 @@ export const API_BASE_URL = 'https://api.tvmaze.com'
 export const API_MAX_RETRIES = 3
 export const API_RETRY_DELAY_MS = 1500
 export const API_INITIAL_PAGES = 1
-export const API_MAX_PAGES = 4
+export const API_HARD_CEILING = 20
+export const API_BACKFILL_BATCH = 4
 
 // ── Search ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +17,7 @@ export const DEBOUNCE_MS = 300
 
 export const SCROLL_THRESHOLD = 4
 export const SCROLL_FRACTION = 0.75
+export const CAROUSEL_PAGE_SIZE = 20
 
 // ── Rating thresholds ───────────────────────────────────────────────────────
 

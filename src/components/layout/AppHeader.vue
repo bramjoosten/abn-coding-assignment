@@ -36,7 +36,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
         <span class="logo-text">bram's coding assignment</span>
       </router-link>
 
-      <div class="center-group">
+      <div class="spacer" />
+
+      <div class="end-group">
         <SearchBar />
         <button
           v-if="isHome"
@@ -52,8 +54,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
           <span v-if="preferredGenres.length" class="filter-count">{{ preferredGenres.length }}</span>
         </button>
       </div>
-
-      <div class="spacer" />
     </div>
   </header>
 </template>
@@ -118,11 +118,12 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   50% { fill: transparent; }
 }
 
-/* ── Center group ── */
+/* ── End group ── */
 
-.center-group {
+.end-group {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -183,6 +184,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
   .spacer {
     display: none;
+  }
+
+  .end-group {
+    justify-content: flex-end;
   }
 }
 </style>

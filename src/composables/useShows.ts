@@ -8,9 +8,9 @@ import { useShowStore } from '@/stores/showStore'
 
 export function useShows() {
   const {
-    loading, error, hasMore, genreMap, sortedGenres,
+    loading, error, genreMap, sortedGenres,
     preferredGenres, hasChosenPrefs, showGenrePicker, setPreferredGenres,
-    loadShows, loadMore,
+    loadShows,
   } = useShowStore()
 
   onMounted(() => {
@@ -18,8 +18,8 @@ export function useShows() {
   })
 
   return {
-    loading, error, hasMore, genreMap, sortedGenres,
+    loading, error, genreMap, sortedGenres,
     preferredGenres, hasChosenPrefs, showGenrePicker, setPreferredGenres,
-    retry: loadShows, loadMore,
+    retry: loadShows,
   }
 }

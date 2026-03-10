@@ -20,7 +20,7 @@ describe('showStore', () => {
     expect(store.shows.value).toEqual([])
     expect(store.loading.value).toBe(false)
     expect(store.error.value).toBeNull()
-    expect(store.hasMore.value).toBe(true)
+    expect(store.canFetchMore.value).toBe(true)
   })
 
   it('loads shows and builds genre map', async () => {
@@ -76,7 +76,7 @@ describe('showStore', () => {
     await store.loadShows()
 
     expect(store.error.value).toBe('Network error')
-    expect(store.hasMore.value).toBe(true)
+    expect(store.canFetchMore.value).toBe(true)
   })
 
   it('does not reload if already loaded', async () => {
@@ -99,17 +99,22 @@ describe('showStore', () => {
     expect(genres).toEqual(['Comedy', 'Crime', 'Drama'])
   })
 
-  it('loadMore appends additional shows', async () => {
+  it('requestBackfill fetches more pages for sparse genres', async () => {
     mockFetchPages.mockResolvedValue([mockShow])
 
     const store = useShowStore()
     await store.loadShows()
     expect(store.shows.value).toHaveLength(1)
 
-    mockFetchPages.mockResolvedValue([mockShowMidRating, mockShowLowRating])
-    await store.loadMore()
+    // First backfill batch returns more shows, then empty to signal exhaustion
+    mockFetchPages
+      .mockResolvedValueOnce([mockShowMidRating, mockShowLowRating])
+      .mockResolvedValue([])
+    store.requestBackfill('Drama')
+
+    // Wait for the async backfill to complete
+    await new Promise((r) => setTimeout(r, 50))
 
     expect(store.shows.value).toHaveLength(3)
-    expect(store.hasMore.value).toBe(false)
   })
 })
